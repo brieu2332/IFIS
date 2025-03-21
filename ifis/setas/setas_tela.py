@@ -7,12 +7,13 @@ class Seta:
         self.ox = ox 
         self.oy = oy
         self.r = r
+        self.a = 0
         self.espessura = espessura
         self.destino_x = destino_x  
         self.destino_y = destino_y
 
     def desenhar(self, tela):
-        self.a = atan2(self.oy - self.destino_y, self.ox - self.destino_x)
+        self.a = atan2(self.destino_y - self.oy, self.destino_x - self.ox)
 
         x = self.r * cos(self.a)
         y = self.r * sin(self.a)
@@ -25,8 +26,8 @@ class Seta:
         y3 = (r2 * sin(c)) + y
 
         pygame.draw.line(tela, self.cor, (self.ox, self.oy), (self.destino_x, self.destino_y), self.espessura)
-        pygame.draw.line(tela, self.cor, (self.destino_x, self.destino_y), (self.destino_x + x2, self.destino_y + y2), self.espessura)
-        pygame.draw.line(tela, self.cor, (self.destino_x, self.destino_y), (self.destino_x + x3, self.destino_y + y3), self.espessura)
+        pygame.draw.line(tela, self.cor, (self.destino_x, self.destino_y), (self.destino_x - x2, self.destino_y - y2), self.espessura)
+        pygame.draw.line(tela, self.cor, (self.destino_x, self.destino_y), (self.destino_x - x3, self.destino_y - y3), self.espessura)
 
 class Jogo:
     def __init__(self, largura=700, altura=700, distancia_entre_etas=53):#self, largura=700, altura=700, distancia_entre_etas=43
@@ -39,14 +40,14 @@ class Jogo:
         self.fim_jogo = False
         self.setas = []
 
-        centro_x = largura // 2
-        centro_y = altura // 2 
+        dx = self.largura // 2
+        dy = self.altura // 2
 
         for x in range(0, largura, distancia_entre_etas):
             for y in range(0, altura, distancia_entre_etas):
                 r = 15
                 espessura = 1
-                self.setas.append(Seta(self.cor_branca, 50, 50, r, espessura, x, y))
+                self.setas.append(Seta(self.cor_branca, x, y, r, espessura, dx, dy))
 
     def executar(self):
         while not self.fim_jogo:

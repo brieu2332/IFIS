@@ -1,6 +1,6 @@
 import pygame
 import math
-from line import Seta  # Importa a classe Seta do arquivo line.py
+from extensao.ifis.setas.line import Seta  # Importa a classe Seta do arquivo line.py
 
 pygame.init()
 largura, altura = 1100, 800
