@@ -19,26 +19,26 @@ def rotate_point(px, py, cx, cy, angle):
 # Modifique o cálculo de C e D para encurtar as linhas
 arrow_wing_length = 0.3  # Fração do comprimento da linha principal
 
-# Ponto A inicial
-A = (250, 450)
+# Ponto x inicial
+x = (250, 450)
 
-# Ponto fixo B
-B = (250, 100)
+# Ponto fixo y
+y = (250, 100)
 
-# Pega um ponto intermediário entre A e B para as "penas"
+# Pega um ponto intermediário entre x e y para as "penas"
 temp_point = (
-    B[0] + (A[0] - B[0]) * arrow_wing_length,
-    B[1] + (A[1] - B[1]) * arrow_wing_length
+    y[0] + (x[0] - y[0]) * arrow_wing_length,
+    y[1] + (x[1] - y[1]) * arrow_wing_length
 )
-print(B[1])
+print(y[1])
 
 # Ângulo de rotação (fixo)
 angle = 30
 
 # Calcula o novo ponto C
 # Rotaciona o ponto intermediário
-C = rotate_point(temp_point[0], temp_point[1], B[0], B[1], angle)
-D = rotate_point(temp_point[0], temp_point[1], B[0], B[1], -angle)
+C = rotate_point(temp_point[0], temp_point[1], y[0], y[1], angle)
+D = rotate_point(temp_point[0], temp_point[1], y[0], y[1], -angle)
 
 # Loop principal
 running = True
@@ -51,9 +51,9 @@ while running:
             running = False
 
     # Desenha os pontos e vetores
-    pygame.draw.line(screen, (255, 255, 255), B, A, 2)  # Vetor BA
-    pygame.draw.line(screen, (0, 255, 0), B, C, 2)  # Vetor BC (rotacionado)
-    pygame.draw.line(screen, (0, 0, 255), B, D, 2)  # Vetor BC (rotacionado)
+    pygame.draw.line(screen, (255, 255, 255), y, x, 2)  # Vetor yx
+    pygame.draw.line(screen, (0, 255, 0), y, C, 2)  # Vetor yC (rotacionado)
+    pygame.draw.line(screen, (0, 0, 255), y, D, 2)  # Vetor yC (rotacionado)
 
    
     pygame.display.flip()
