@@ -12,13 +12,13 @@ corBranca = (255,255,255)
 corSLA = (0,225,0)
 
 #posição de inicio e fim da linha
-x = (250,250)
-y = (150, 400)
+inicio = (250,250)
+fim = (150, 400)
 
 #encontra a direção da linha
-vetorX = (y[0] - x[0])
+vetorX = (fim[0] - inicio[0])
 print(vetorX)
-vetorY = (y[1] - x[1])
+vetorY = (fim[1] - inicio[1])
 print(vetorY)
     
 
@@ -28,7 +28,7 @@ print(magnitude)
 
 tamanhoPonta = 0.3 * magnitude
 
-#Usando math.atan2(vetory, vetorx) para encontrar o ângulo (em radianos) que a linha faz com o eixo X
+#Usando math.atan2(vetory, vetorx) para encontrar o ângulo (em radianos) que a linha faz com o eixo inicio
 angulo = math.atan2(vetorY, vetorX)
 print(angulo)
 
@@ -38,8 +38,8 @@ anguloPrincipal = math.pi/6 #pi = 3,14, angulo 30°
 print(anguloPrincipal)
 
 #pontas da seta
-pontaX = y[0] - (vetorX * math.cos(anguloPrincipal + angulo))
-pontaY = y[1] - (vetorY * math.sin(anguloPrincipal + angulo))
+pontaX = fim[0] - (vetorX * math.cos(anguloPrincipal + angulo))
+pontaY = fim[1] - (vetorY * math.sin(anguloPrincipal + angulo))
 
 
 def desenhaSeta(tela, cor, inicio, fim):
@@ -60,10 +60,10 @@ def desenhaSeta(tela, cor, inicio, fim):
     anguloPonta1 = angulo + math.pi/6
     anguloPonta2 = angulo - math.pi/6
 
-    pontaX1 = y[0] - (tamanhoPonta * math.cos(anguloPonta1))
-    pontaY1 = y[1] - (tamanhoPonta * math.sin(anguloPonta1))
-    pontaX2 = y[0] - (tamanhoPonta * math.cos(anguloPonta2))
-    pontaY2 = y[1] - (tamanhoPonta * math.sin(anguloPonta2))
+    pontaX1 = fim[0] - (tamanhoPonta * math.cos(anguloPonta1))
+    pontaY1 = fim[1] - (tamanhoPonta * math.sin(anguloPonta1))
+    pontaX2 = fim[0] - (tamanhoPonta * math.cos(anguloPonta2))
+    pontaY2 = fim[1] - (tamanhoPonta * math.sin(anguloPonta2))
 
     pygame.draw.line(tela, cor, fim, (pontaX1, pontaY1))
     pygame.draw.line(tela, cor, fim, (pontaX2, pontaY2))
@@ -79,7 +79,7 @@ while rodando:
         if event.type == pygame.QUIT:
             rodando = False
 
-    desenhaSeta(tela, corBranca, x, y)
+    desenhaSeta(tela, corBranca, inicio, fim)
 
     pygame.display.update()
 pygame.quit()
