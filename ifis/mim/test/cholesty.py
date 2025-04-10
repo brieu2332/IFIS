@@ -14,8 +14,6 @@ corPreta = (0, 0, 0)
 corBranca = (255, 255, 255)
 
 # coordenada x, coordenada y, scala s
-def fvet(x, y, s):
-    return (-x*s, -1/2*y*s)
 
 def desenhaSeta(tela, cor, inicio, fim):
     
@@ -49,6 +47,20 @@ def desenhaSeta(tela, cor, inicio, fim):
     pygame.draw.line(tela, cor, fim, (pontaX1, pontaY1))
     pygame.draw.line(tela, cor, fim, (pontaX2, pontaY2))
 
+def newTela(x,y):
+    i = larguraTela // 2 + x
+    j = alturaTela //  2 - y
+    return(i, j)
+
+# x= i, y=j 
+def fvet(i, j, s):
+    #return (i*s, j*s)
+    #return (i*s, math.sin(i)*j*s)
+    #return (i*s, -j*s)
+    #return (i*s, -0,5*j*s)
+    return (-j*s, i*s)
+    
+
 # Loop principal
 rodando = True
 while rodando:
@@ -62,11 +74,11 @@ while rodando:
     # Desenha um grid de setas
     for x in range(-200, +201, 25):
         for y in range(-200, 201, 25):
-            vet = fvet(x,y,1/10)
-            u = x + larguraTela/2
-            v = y + alturaTela/2
+            vet = fvet(x, y, 1/9)
+            inicio = newTela(x, y)
+            fim = newTela(x + vet[0], y + vet[1])
             print(x)
-            desenhaSeta(tela, corBranca, (u, v), (u + vet[0], v + vet[1]))
+            desenhaSeta(tela, corBranca, inicio, fim)
 
     pygame.display.update()
 
