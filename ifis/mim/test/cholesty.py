@@ -1,12 +1,13 @@
 import pygame
 import math
+import numpy as np
 
 
 pygame.init()
 
 # Configurações da tela
-larguraTela = 500
-alturaTela = 500
+larguraTela = 800
+alturaTela = 800
 tela = pygame.display.set_mode((larguraTela, alturaTela))
 
 # Cores
@@ -18,7 +19,7 @@ corBranca = (255, 255, 255)
 def desenhaSeta(tela, cor, inicio, fim):
     
     # Desenha a linha principal
-    pygame.draw.line(tela, cor, inicio, fim)
+    pygame.draw.line(tela, cor, cart_para_cg(inicio), cart_para_cg(fim))
 
     # Calcula o vetor da linha
     vetorX = fim[0] - inicio[0]
@@ -44,22 +45,32 @@ def desenhaSeta(tela, cor, inicio, fim):
     pontaY2 = fim[1] - tamanhoPonta * math.sin(anguloPonta2)
 
     # Desenha as duas linhas da ponta da seta
-    pygame.draw.line(tela, cor, fim, (pontaX1, pontaY1))
-    pygame.draw.line(tela, cor, fim, (pontaX2, pontaY2))
+    pygame.draw.line(tela, cor, cart_para_cg(fim), cart_para_cg((pontaX1, pontaY1)))
+    pygame.draw.line(tela, cor, cart_para_cg(fim), cart_para_cg((pontaX2, pontaY2)))
 
-def newTela(x,y):
-    i = larguraTela // 2 + x
-    j = alturaTela //  2 - y
-    return(i, j)
 
-# x= i, y=j 
-def fvet(i, j, s):
-    #return (i*s, j*s)
-    #return (i*s, math.sin(i)*j*s)
-    #return (i*s, -j*s)
-    #return (i*s, -0,5*j*s)
-    return (-j*s, i*s)
+# x= x, y=y 
+def fvet(x, y, s):
+    #return (x*s, y*s)
+    #return (x * s, math.sin(x)*y*s)
+    #return (x*s, -y*s)
+    #return (x*s, -0,5*y*s)
+    #return (-y*s, x*s)
+    u =  (math.sin(x) + math.sin(y))
+    v=  (math.sin(x) - math.sin(y)) 
+    m = (u**2 + v**2 )**(0.5) 
+    if m == 0:
+        m = 1
+
+    u = u/m*s 
+    v = v/m*s
+    return(u,v) 
+
     
+
+def cart_para_cg(w):
+    return (w[0] + larguraTela//2, -w[1] + alturaTela//2)
+
 
 # Loop principal
 rodando = True
@@ -71,14 +82,20 @@ while rodando:
         if event.type == pygame.QUIT:
             rodando = False
 
-    # Desenha um grid de setas
-    for x in range(-200, +201, 25):
-        for y in range(-200, 201, 25):
-            vet = fvet(x, y, 1/9)
-            inicio = newTela(x, y)
-            fim = newTela(x + vet[0], y + vet[1])
-            print(x)
+     # Desenha um grid de setas
+    for x in np.linspace(-4, +4, 25):
+        for y in np.linspace(-4, 4, 25):
+            print('bka') 
+            vet = fvet(x, y, 10)
+            inicio = (x*100, y*100)
+            fim = (x*100 + vet[0], y*100 + vet[1])
             desenhaSeta(tela, corBranca, inicio, fim)
+
+    # inicio = ( 0,0)
+    # fim = (-100,0)
+    # desenhaSeta(tela, corBranca, inicio, fim)
+    
+
 
     pygame.display.update()
 
