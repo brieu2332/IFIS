@@ -1,0 +1,24 @@
+﻿  Main.cpp
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(128,50): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
+glfw3.lib(init.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(init.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(window.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(window.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(context.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(context.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(input.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(input.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_time.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_thread.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(platform.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(platform.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(monitor.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(monitor.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(vulkan.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_init.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(null_init.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(null_init.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_module.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_module.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_monitor.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_window.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(win32_joystick.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(wgl_context.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(egl_context.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(osmesa_context.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(null_monitor.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(null_monitor.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(null_window.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(null_window.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+glfw3.lib(null_joystick.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(null_joystick.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
+  openGl2.vcxproj -> C:\Users\gabri\OneDrive\codigos\openGL\openGl2\x64\Debug\openGl2.exe
