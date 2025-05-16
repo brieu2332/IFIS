@@ -48,7 +48,7 @@ class Jogo:
         
         for x in range(0, largura, distancia_entre_etas):
             for y in range(0, altura, distancia_entre_etas):
-                r = 15# tamanho seta
+                r = 150# tamanho seta
                 espessura = 2  
                 self.setas.append(Seta(self.cor_branca, x, y, r, espessura, 0, 0))
                 
