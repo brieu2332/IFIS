@@ -1,12 +1,47 @@
 import pygame
 import math
-from extensao.ifis.setas.line import Seta  # Importa a classe Seta do arquivo line.py
+#import line from setas  # Importa a classe Seta do arquivo line.py
 
 pygame.init()
 largura, altura = 1100, 800
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Simulação IFIS: Sol e Terra")
 clock = pygame.time.Clock()
+
+
+
+class Seta:
+    def __init__(self, cor, ox, oy, r, espessura, destino_x, destino_y):
+        self.cor = cor
+        self.ox = ox
+        self.oy = oy
+        self.r = r
+        self.espessura = espessura
+        self.a = 0
+        self.destino_x = destino_x 
+        self.destino_y = destino_y
+
+    def desenhar(self, tela):
+        # retorna o ângulo (em radianos) cujo seno e cosseno correspondem às coordenadas y e x. Ela é usada para calcular o ângulo de rotação entre dois pontos no plano cartesiano.
+        self.a = math.atan2(self.destino_y - self.oy, self.destino_x - self.ox)
+        
+        x = self.r * math.cos(self.a)
+        y = self.r * math.sin(self.a)
+
+        b = self.a  + 3 * math.pi / 4
+        c = self.a + 5 * math.pi / 4
+        r2 = self.r / 3
+
+        x2 = (r2 * math.cos(b)) + x
+        x3 = (r2 * math.cos(c)) + x
+        y3 = (r2 * math.sin(c)) + y
+        y2 = (r2 * math.sin(b)) + y
+
+        pygame.draw.line(tela, self.cor, (self.ox, self.oy), (self.ox + x, self.oy + y), self.espessura)
+        pygame.draw.line(tela, self.cor, (self.ox + x, self.oy + y), (self.ox + x2, self.oy + y2), self.espessura)
+        pygame.draw.line(tela, self.cor, (self.ox + x, self.oy + y), (self.ox + x3, self.oy + y3), self.espessura)
+
+     
 
 # Classe mãe para corpos celestes
 class CorpoCeleste:
