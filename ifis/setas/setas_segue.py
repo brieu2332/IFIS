@@ -36,7 +36,7 @@ class Seta:
         
 
 class Jogo:
-    def __init__(self, largura = 800, altura = 800, distancia_entre_etas = 42):
+    def __init__(self, largura = 800, altura = 800, distancia_entre_etas = 27):
         pygame.init()
         self.largura = largura
         self.altura = altura

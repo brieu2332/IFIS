@@ -1,5 +1,6 @@
 import pygame
 import math
+import time
 
 pygame.init()
 
@@ -11,19 +12,16 @@ pygame.display.set_caption("Campo Vetorial 2D Bonito")
 corPreta = (0, 0, 0)
 corBranca = (255, 255, 255)
 
-def tela_cartesiano(x, y):
+def cart_para_tela(x, y):
     x_tela = larguraTela // 2 + int(x)
     y_tela = alturaTela // 2 - int(y)
     return (x_tela, y_tela)
 
-#aquiiii outras func
 def campo_vetorial(x, y):
-    u = x + y
-    v = x - y
-    m = math.sqrt(u*u + v*v)
-    if m == 0:
-        m = 1
-    return (u/m, v/m)
+    modulo = math.hypot(x, y)
+    if modulo == 0:
+        return (0, 0)
+    return (-y + x, x + y)
 
 
 def desenhaSeta(tela, cor, inicio, fim):
@@ -31,7 +29,10 @@ def desenhaSeta(tela, cor, inicio, fim):
 
     dx = fim[0] - inicio[0]
     dy = fim[1] - inicio[1]
-    
+    magnitude = math.hypot(dx, dy)
+    if magnitude == 0:
+        return
+
     tamanhoPonta = 5
     angulo = math.atan2(dy, dx)
 
@@ -45,6 +46,9 @@ def desenhaSeta(tela, cor, inicio, fim):
 
 #INICIAR junto com o arquivo funções.fun.py
 
+espacamento = 25
+comprimento = 5
+
 rodando = True
 while rodando:
     tela.fill(corPreta)
@@ -53,9 +57,14 @@ while rodando:
         if event.type == pygame.QUIT:
             rodando = False
 
-    espacamento = 25
-    comprimento = 25
+    # espacamento += 1
+    # if espacamento == 50:
+    #     espacamento = 20
 
+    comprimento += 3
+    if comprimento == 25:
+        comprimento = 10
+        
     for x in range(-larguraTela // 2, larguraTela // 2 + 1, espacamento):
         for y in range(-alturaTela // 2, alturaTela // 2 + 1, espacamento):
             u, v = campo_vetorial(x, y)
@@ -67,11 +76,12 @@ while rodando:
             else:
                 u, v = 0, 0
 
-            inicio = tela_cartesiano(x, y)
-            fim = tela_cartesiano(x + u, y + v)
+            inicio = cart_para_tela(x, y)
+            fim = cart_para_tela(x + u, y + v)
 
             desenhaSeta(tela, corBranca, inicio, fim)
 
     pygame.display.update()
+    time.sleep(0.1)
 
 pygame.quit()
