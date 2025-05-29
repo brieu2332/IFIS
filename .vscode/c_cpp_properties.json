@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+        "includePath": [
+    "${workspaceFolder}/**",
+    "/usr/include",
+    "/usr/include/GL",
+    "/usr/include/GLFW",
+    "/usr/local/include",
+    "/usr/include/x86_64-linux-gnu",
+    "/usr/include/c++/*",
+    "/usr/include/x86_64-linux-gnu/c++/*",
+    "/usr/include/c++/*/backward",
+    "/usr/lib/gcc/x86_64-linux-gnu/*/include"
+],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "configurationProvider": "ms-vscode.cpptools",
+             "browse": {
+        "path": [
+          "${workspaceFolder}",
+          "/usr/include"
+        ]}
+    }
+],
+    "version": 4
+}

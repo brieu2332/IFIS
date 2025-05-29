@@ -1,0 +1,25 @@
+carga.h
+Define o que é uma carga elétrica:
+Posição (x, y), carga (q), massa (m), velocidade (vx, vy).
+É como a "ficha técnica" de cada carga.
+
+campoEletrico.h
+Calcula o campo elétrico gerado por outras cargas.
+Usa a Lei de Coulomb para determinar a força de atração/repulsão.
+
+main.cpp
+Cria cargas e simula seu movimento usando física básica:
+Força elétrica (F = q * E).
+Aceleração (a = F / m).
+Atualização de velocidade e posição (Método de Euler).
+No final, imprime a posição da carga a cada passo (para debug).
+
+
+MÉTODO Euler
+O Método de Euler é a forma mais simples de simular movimento em computação gráfica/física.
+Calcula a aceleração (usando forças).
+Atualiza a velocidade (com base na aceleração).
+Atualiza a posição (com base na velocidade).
+
+CONSTANTE DE Coulomb
+A Lei de Coulomb descreve a força entre duas cargas elétricas
