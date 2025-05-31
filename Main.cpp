@@ -1,8 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <functional>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+// Se M_PI não estiver definido:
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 const char* vertexShaderSource = R"(
 #version 330 core
@@ -20,24 +26,36 @@ void main() {
 }
 )";
 
-void calcula_pontas(float x1, float y1, float x2, float y2, float pontaX[2], float pontaY[2], float tamanhoPonta = 0.02f) {
+// assinatura de função para campo vetorial
+using VectorFieldFunction = std::function<std::pair<float, float>(float, float)>;
+
+void calcula_pontas(float x1, float y1,
+    float x2, float y2,
+    float pontaX[2], float pontaY[2],
+    float tamanhoPonta = 0.02f)
+{
     float dx = x2 - x1;
     float dy = y2 - y1;
-    float magnitude = sqrt(dx * dx + dy * dy);
-    if (magnitude == 0) return;
+    float magnitude = std::sqrt(dx * dx + dy * dy);
+    if (magnitude == 0.0f) return;
 
-    float angulo = atan2(dy, dx);
+    float angulo = std::atan2(dy, dx);
 
-    pontaX[0] = x2 - tamanhoPonta * cos(angulo - 3.14 / 6);
-    pontaY[0] = y2 - tamanhoPonta * sin(angulo - 3.14 / 6);
+    // cast explícito de double para float
+    pontaX[0] = x2 - tamanhoPonta * (float)std::cos(angulo - M_PI / 6.0);
+    pontaY[0] = y2 - tamanhoPonta * (float)std::sin(angulo - M_PI / 6.0);
 
-    pontaX[1] = x2 - tamanhoPonta * cos(angulo + 3.14 / 6);
-    pontaY[1] = y2 - tamanhoPonta * sin(angulo + 3.14 / 6);
+    pontaX[1] = x2 - tamanhoPonta * (float)std::cos(angulo + M_PI / 6.0);
+    pontaY[1] = y2 - tamanhoPonta * (float)std::sin(angulo + M_PI / 6.0);
 }
 
-void cria_seta(float x1, float y1, float dirX, float dirY, float tamanho, float tamanhoPonta, std::vector<float>& vertices) {
-    float mag = sqrt(dirX * dirX + dirY * dirY);
-    if (mag == 0) mag = 1.0f;
+void cria_seta(float x1, float y1,
+    float dirX, float dirY,
+    float tamanho, float tamanhoPonta,
+    std::vector<float>& vertices)
+{
+    float mag = std::sqrt(dirX * dirX + dirY * dirY);
+    if (mag == 0.0f) mag = 1.0f;
     dirX /= mag;
     dirY /= mag;
 
@@ -47,20 +65,44 @@ void cria_seta(float x1, float y1, float dirX, float dirY, float tamanho, float 
     float pontaX[2], pontaY[2];
     calcula_pontas(x1, y1, x2, y2, pontaX, pontaY, tamanhoPonta);
 
-    // Linha principal
+    // linha principal
     vertices.push_back(x1); vertices.push_back(y1);
     vertices.push_back(x2); vertices.push_back(y2);
 
-    // Ponta 1
+    // ponta 1
     vertices.push_back(x2); vertices.push_back(y2);
     vertices.push_back(pontaX[0]); vertices.push_back(pontaY[0]);
 
-    // Ponta 2
+    // ponta 2
     vertices.push_back(x2); vertices.push_back(y2);
     vertices.push_back(pontaX[1]); vertices.push_back(pontaY[1]);
 }
 
+void gera_campo_vetorial(VectorFieldFunction func,
+    std::vector<float>& vertices,
+    int cols, int rows,
+    float tamanhoSeta, float tamanhoPonta)
+{
+    const float spacingX = 2.0f / cols;
+    const float spacingY = 2.0f / rows;
+
+    for (int i = 0; i < cols; ++i) {
+        for (int j = 0; j < rows; ++j) {
+            float x = -1.0f + i * spacingX + spacingX / 2.0f;
+            float y = -1.0f + j * spacingY + spacingY / 2.0f;
+
+            // sem structured bindings:
+            std::pair<float, float> dir = func(x, y);
+            float dirX = dir.first;
+            float dirY = dir.second;
+
+            cria_seta(x, y, dirX, dirY, tamanhoSeta, tamanhoPonta, vertices);
+        }
+    }
+}
+
 int main() {
+    // inicialização do GLFW
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -68,81 +110,78 @@ int main() {
 
     GLFWwindow* window = glfwCreateWindow(800, 800, "Campo Vetorial", NULL, NULL);
     if (!window) {
-        std::cout << "Falha ao criar janela GLFW" << std::endl;
+        std::cerr << "Falha ao criar janela GLFW\n";
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
     gladLoadGL();
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    // compila os shaders
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &vertexShaderSource, NULL);
+    glCompileShader(vs);
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fs);
 
     GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vs);
+    glAttachShader(shaderProgram, fs);
     glLinkProgram(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(vs);
+    glDeleteShader(fs);
 
-    // Parâmetros do campo vetorial
-    const int cols = 20;  // colunas
-    const int rows = 20;  // linhas
-    const float spacing = 2.0f / cols; // espaço entre setas
-    const float tamanhoSeta = spacing * 0.4f; // tamanho da seta
-    const float tamanhoPonta = tamanhoSeta * 0.3f;
+    // define aqui a função do campo vetorial
+    VectorFieldFunction campo = [](float x, float y) {
+        return std::make_pair(-y + x, x + y);
+        };
 
-    const float centro_x = 0.0f;
-    const float centro_y = 0.0f;
+    const int cols = 20, rows = 20;
+    const float tamanhoSeta = 0.04f;
+    const float tamanhoPonta = 0.012f;
 
     std::vector<float> vertices;
+    gera_campo_vetorial(campo, vertices, cols, rows, tamanhoSeta, tamanhoPonta);
 
-    for (int i = 0; i < cols; ++i) {
-        for (int j = 0; j < rows; ++j) {
-            float x = -1.0f + i * spacing + spacing / 2;
-            float y = -1.0f + j * spacing + spacing / 2;
-
-            float dirX = centro_x - x;
-            float dirY = centro_y - y;
-
-            cria_seta(x, y, dirX, dirY, tamanhoSeta, tamanhoPonta, vertices);
-        }
-    }
-
+    // setup VAO/VBO
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    // cast explícito para GLsizeiptr
+    glBufferData(GL_ARRAY_BUFFER,
+        (GLsizeiptr)(vertices.size() * sizeof(float)),
+        vertices.data(),
+        GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glLineWidth(1.5f);
 
+    // loop principal
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_LINES, 0, vertices.size() / 2);
+        glDrawArrays(GL_LINES, 0, (GLsizei)(vertices.size() / 2));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // cleanup
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }
