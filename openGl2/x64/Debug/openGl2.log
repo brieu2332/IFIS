@@ -1,5 +1,9 @@
 ﻿  Main.cpp
-C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(128,50): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(31,20): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(32,20): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(34,20): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(35,20): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+C:\Users\gabri\OneDrive\codigos\openGL\openGl2\Main.cpp(135,51): warning C4267: 'argumento': conversão de 'size_t' para 'GLsizei', possível perda de dados
 glfw3.lib(init.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(init.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
 glfw3.lib(window.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(window.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração
 glfw3.lib(context.obj) : warning LNK4099: PDB '' não foi encontrado 'glfw3.lib(context.obj)' ou no ''; vinculando objeto quando quando sem nenhuma informação de depuração

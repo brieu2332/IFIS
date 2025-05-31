@@ -4,66 +4,60 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define PI 3.14159265359f
-
-// Vertex Shader
 const char* vertexShaderSource = R"(
 #version 330 core
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec2 aPos;
 void main() {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = vec4(aPos, 0.0, 1.0);
 }
 )";
 
-// Fragment Shader
 const char* fragmentShaderSource = R"(
 #version 330 core
 out vec4 FragColor;
 void main() {
-    FragColor = vec4(0.2f, 0.6f, 1.0f, 1.0f); // azul claro
+    FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 }
 )";
 
-// Gera os vértices e índices de uma esfera
-void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
-    std::vector<float>& vertices, std::vector<unsigned int>& indices) {
-    float x, y, z, xy;
-    float sectorStep = 2 * PI / sectorCount;
-    float stackStep = PI / stackCount;
+void calcula_pontas(float x1, float y1, float x2, float y2, float pontaX[2], float pontaY[2], float tamanhoPonta = 0.02f) {
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    float magnitude = sqrt(dx * dx + dy * dy);
+    if (magnitude == 0) return;
 
-    for (unsigned int i = 0; i <= stackCount; ++i) {
-        float stackAngle = PI / 2 - i * stackStep; // de pi/2 a -pi/2
-        xy = radius * cosf(stackAngle);
-        z = radius * sinf(stackAngle);
+    float angulo = atan2(dy, dx);
 
-        for (unsigned int j = 0; j <= sectorCount; ++j) {
-            float sectorAngle = j * sectorStep;
-            x = xy * cosf(sectorAngle);
-            y = xy * sinf(sectorAngle);
-            vertices.push_back(x);
-            vertices.push_back(y);
-            vertices.push_back(z);
-        }
-    }
+    pontaX[0] = x2 - tamanhoPonta * cos(angulo - 3.14 / 6);
+    pontaY[0] = y2 - tamanhoPonta * sin(angulo - 3.14 / 6);
 
-    // Índices para desenhar com GL_TRIANGLES
-    for (unsigned int i = 0; i < stackCount; ++i) {
-        unsigned int k1 = i * (sectorCount + 1);
-        unsigned int k2 = k1 + sectorCount + 1;
+    pontaX[1] = x2 - tamanhoPonta * cos(angulo + 3.14 / 6);
+    pontaY[1] = y2 - tamanhoPonta * sin(angulo + 3.14 / 6);
+}
 
-        for (unsigned int j = 0; j < sectorCount; ++j, ++k1, ++k2) {
-            if (i != 0) {
-                indices.push_back(k1);
-                indices.push_back(k2);
-                indices.push_back(k1 + 1);
-            }
-            if (i != (stackCount - 1)) {
-                indices.push_back(k1 + 1);
-                indices.push_back(k2);
-                indices.push_back(k2 + 1);
-            }
-        }
-    }
+void cria_seta(float x1, float y1, float dirX, float dirY, float tamanho, float tamanhoPonta, std::vector<float>& vertices) {
+    float mag = sqrt(dirX * dirX + dirY * dirY);
+    if (mag == 0) mag = 1.0f;
+    dirX /= mag;
+    dirY /= mag;
+
+    float x2 = x1 + dirX * tamanho;
+    float y2 = y1 + dirY * tamanho;
+
+    float pontaX[2], pontaY[2];
+    calcula_pontas(x1, y1, x2, y2, pontaX, pontaY, tamanhoPonta);
+
+    // Linha principal
+    vertices.push_back(x1); vertices.push_back(y1);
+    vertices.push_back(x2); vertices.push_back(y2);
+
+    // Ponta 1
+    vertices.push_back(x2); vertices.push_back(y2);
+    vertices.push_back(pontaX[0]); vertices.push_back(pontaY[0]);
+
+    // Ponta 2
+    vertices.push_back(x2); vertices.push_back(y2);
+    vertices.push_back(pontaX[1]); vertices.push_back(pontaY[1]);
 }
 
 int main() {
@@ -72,17 +66,15 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 800, "Esfera OpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 800, "Campo Vetorial", NULL, NULL);
     if (!window) {
-        std::cout << "Erro ao criar janela GLFW" << std::endl;
+        std::cout << "Falha ao criar janela GLFW" << std::endl;
         glfwTerminate();
         return -1;
     }
     glfwMakeContextCurrent(window);
     gladLoadGL();
-    glViewport(0, 0, 800, 800);
 
-    // Compila shaders
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -95,37 +87,52 @@ int main() {
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
-
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
-    generateSphere(0.5f, 36, 18, vertices, indices);
+    // Parâmetros do campo vetorial
+    const int cols = 20;  // colunas
+    const int rows = 20;  // linhas
+    const float spacing = 2.0f / cols; // espaço entre setas
+    const float tamanhoSeta = spacing * 0.4f; // tamanho da seta
+    const float tamanhoPonta = tamanhoSeta * 0.3f;
 
-    GLuint VAO, VBO, EBO;
+    const float centro_x = 0.0f;
+    const float centro_y = 0.0f;
+
+    std::vector<float> vertices;
+
+    for (int i = 0; i < cols; ++i) {
+        for (int j = 0; j < rows; ++j) {
+            float x = -1.0f + i * spacing + spacing / 2;
+            float y = -1.0f + j * spacing + spacing / 2;
+
+            float dirX = centro_x - x;
+            float dirY = centro_y - y;
+
+            cria_seta(x, y, dirX, dirY, tamanhoSeta, tamanhoPonta, vertices);
+        }
+    }
+
+    GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    glLineWidth(1.5f);
+
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_LINES, 0, vertices.size() / 2);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -133,9 +140,9 @@ int main() {
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
     glfwDestroyWindow(window);
     glfwTerminate();
+
     return 0;
 }
