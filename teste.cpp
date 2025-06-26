@@ -27,7 +27,7 @@ int main() {
     //    sim.imprimirEstado();
 
         if (sim.detectarColisao()) {
-            std::cout << "💥 COLISÃO DETECTADA! Estrelas se fundiram!\n";
+            std::cout << "colidiram\n";
             break;
         }
 

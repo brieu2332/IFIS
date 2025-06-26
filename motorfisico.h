@@ -46,7 +46,7 @@ public:
         }
     }
 
-    // ✅ Detecta colisão entre pares de estrelas
+//detecta colisão entre pares de estrelas
     bool detectarColisao(double tolerancia = 1e-3) const {
         for (size_t i = 0; i < estrelas.size(); ++i) {
             for (size_t j = i + 1; j < estrelas.size(); ++j) {
