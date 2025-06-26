@@ -1,0 +1,5 @@
+#pragma once
+evita que o arquivo seja incluido mais de uma vez no mesmo programa
+Por que usar?
+Imagine que você copia e cola o mesmo código várias vezes → dá erro.
+O #pragma once é como um "aviso" para o compilador: "Só me inclua uma vez, por favor!"
