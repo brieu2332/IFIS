@@ -1,0 +1,35 @@
+# Ignora pastas de build e binários
+x64/
+Libraries/
+output/
+Debug/
+Release/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.exp
+
+# Ignora arquivos temporários do Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# Ignora arquivos de cache e índice
+ipch/
+*.vsidx
+*.VC.db
+
+# Ignora arquivos de sistema
+Thumbs.db
+.DS_Store
+
+# Se estiver usando GLFW/GLAD, ignore os binários baixados
+glad.c
+glad.h
+glfw3.lib
