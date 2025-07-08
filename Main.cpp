@@ -131,28 +131,7 @@ void cria_seta_3d(float x, float y, float z,
     }
 }
 
-// ---- Generate 3D vector field ----
-using VectorField3D = std::function<glm::vec3(float, float, float)>;
-void gera_campo_3d(VectorField3D f,
-    std::vector<float>& verts,
-    int cols, int rows,
-    float shaftLen, float headLen, float headWidth,
-    const std::vector<float>& layersZ)
-{
-    float dx = 2.0f / cols, dy = 2.0f / rows;
-    for (float z : layersZ) {
-        for (int i = 0; i < cols; ++i) {
-            for (int j = 0; j < rows; ++j) {
-                float x = -1.0f + (i + 0.5f) * dx;
-                float y = -1.0f + (j + 0.5f) * dy;
-                glm::vec3 d = f(x, y, z);
-                cria_seta_3d(x, y, z, d.x, d.y, d.z,
-                    shaftLen, headLen, headWidth,
-                    verts);
-            }
-        }
-    }
-}
+
 
 // ---- Camera ----
 struct Camera {
@@ -176,8 +155,71 @@ glm::mat4 computeView(const Camera& c) {
     return glm::lookAt(glm::vec3{ x,y,z }, glm::vec3{ 0 }, glm::vec3{ 0,1,0 });
 }
 
+
+
+using VectorField3D = std::function<glm::vec3(float, float, float)>;
+
+/// Gera o campo volu­métrico e faz upload para GPU:
+/// @param f          função campo(x,y,z)
+/// @param Nx,Ny,Nz   resolução em cada eixo
+/// @param shaftLen   comprimento do corpo da seta
+/// @param headLen    comprimento do bico
+/// @param headW      largura do bico
+/// @param outVAO     VAO criado
+/// @return           número de vértices a desenhar (GL_LINES)
+GLsizei setupVolumetricField(
+    VectorField3D f,
+    int Nx, int Ny, int Nz,
+    float shaftLen, float headLen, float headW,
+    GLuint& outVAO
+) {
+    // 1) Gera camadas Z
+    std::vector<float> layersZ; layersZ.reserve(Nz);
+    for (int k = 0; k < Nz; ++k) {
+        layersZ.push_back(-1.0f + (k + 0.5f) * (2.0f / Nz));
+    }
+
+    // 2) Gera todas as setas no volume
+    std::vector<float> verts;
+    verts.reserve(Nx * Ny * Nz * (2 + 8) * 3); // aprox
+
+    auto gera_campo = [&](float x, float y, float z) {
+        glm::vec3 d = f(x, y, z);
+        cria_seta_3d(x, y, z, d.x, d.y, d.z, shaftLen, headLen, headW, verts);
+        };
+
+    float dx = 2.0f / Nx, dy = 2.0f / Ny;
+    for (float z : layersZ) {
+        for (int i = 0; i < Nx; ++i) {
+            for (int j = 0; j < Ny; ++j) {
+                float x = -1.0f + (i + 0.5f) * dx;
+                float y = -1.0f + (j + 0.5f) * dy;
+                gera_campo(x, y, z);
+            }
+        }
+    }
+
+    // 3) Upload GPU
+    GLuint VBO;
+    glGenVertexArrays(1, &outVAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(outVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER,
+        verts.size() * sizeof(float),
+        verts.data(),
+        GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+        3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
+    return static_cast<GLsizei>(verts.size() / 3);
+}
+
 int main() {
-    GLFWwindow* win = initWindow(800, 600, "Campo Vetorial 3D");
+    // --- inicialização de janela, GLAD, shaders etc. ---
+    GLFWwindow* win = initWindow(800, 600, "Campo Volumétrico 3D");
     if (!win) return -1;
 
     GLuint prog = createProgram();
@@ -190,39 +232,30 @@ int main() {
         0.1f, 100.0f);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
-    std::vector<float> verts;
-    VectorField3D campo3d = [](float x, float y, float z) {
-        float wz = std::sin(2.0f * M_PI * x * y);
-        return glm::normalize(glm::vec3(y, -x, wz));//função1
-        };
-    std::vector<float> layersZ = { -1.0f,-0.5f, 0.0f, 0.5f, 1.0f };
-    gera_campo_3d(campo3d, verts,
-        30, 30,
-        0.2f, // shaft length
-        0.05f, // head length
-        0.02f, // head width
-        layersZ);
+    // --- configura e carrega o campo volu­métrico ---
+    GLuint fieldVAO;
+    int quant_vec = 8;
+    GLsizei vertexCount = setupVolumetricField(
+        // exemplo de campo 3D
+        [](float x, float y, float z) {
+            float wz = std::sin(2.0f * M_PI * x * y);
+            return glm::normalize(glm::vec3(y, -x, wz));
+        },
+        quant_vec, quant_vec, quant_vec,       // Nx,Ny,Nz
+        0.2f,           // shaftLen
+        0.05f,          // headLen
+        0.02f,          // headWidth
+        fieldVAO
+    );
 
-    // VAO/VBO
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER,
-        verts.size() * sizeof(float),
-        verts.data(),
-        GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-        3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
-
+    // --- loop de renderização com câmera orbital ---
     Camera cam;
-    float last = (float)glfwGetTime();
+    float last = static_cast<float>(glfwGetTime());
     while (!glfwWindowShouldClose(win)) {
-        float now = (float)glfwGetTime(), dt = now - last;
+        float now = static_cast<float>(glfwGetTime()),
+            dt = now - last;
         last = now;
+
         processInput(win, cam, dt);
         if (glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(win, 1);
@@ -231,16 +264,17 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(prog);
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glBindVertexArray(VAO);
-        glLineWidth(2.0f);
-        glDrawArrays(GL_LINES, 0, (GLsizei)(verts.size() / 3));
+
+        glBindVertexArray(fieldVAO);
+        glLineWidth(1.0f);
+        glDrawArrays(GL_LINES, 0, vertexCount);
         glfwSwapBuffers(win);
         glfwPollEvents();
     }
 
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &VAO);
+    // --- cleanup (VAO, programa, janela) ---
+    glDeleteVertexArrays(1, &fieldVAO);
     glDeleteProgram(prog);
-    glfwTerminate();    
+    glfwTerminate();
     return 0;
 }

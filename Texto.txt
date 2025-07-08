@@ -1,20 +1,58 @@
-algumas fun��es de exemplo
+﻿algumas funções de exemplo
 
 
-1.9- 
+1.8- 
 float wz = std::sin(2.0f * M_PI * x * y);
     return glm::normalize(glm::vec3(  y,   -x,  wz ));
 };
 
 2.2-
-glm::vec3 v{x, y, z};
-    return glm::normalize(v);
+glm::vec3 r{ x,y,z };
+glm::vec3 v{ -z,0.0f,x };
+return glm::normalize(r + 0.5f * v);
 
 
 3.6- 
-return glm::normalize(glm::vec3(-z, y, x));
-        };
+glm::vec3 v{ x, y, z };
+return glm::normalize(v);
 
-4.8-
-return glm::vec3(-y, x, 0.3f);
-};
+4.6-
+glm::vec3 v{ -x, -y, -z };
+return glm::normalize(v);
+
+5.7-
+return glm::normalize(glm::vec3(-y, x, 0.0f));
+
+
+6.6,5-
+return glm::normalize(glm::vec3( z, 0.0f, -x ));
+
+7.8-
+return glm::normalize(glm::vec3(0.0f, x, 0.0f));
+
+
+8.8- 
+glm::vec3 grad{2.0f*x, 2.0f*y, -2.0f*z};
+    return glm::normalize(grad);
+
+
+
+9.9"vec>=10"-
+float r3 = pow(x*x + y*y + z*z, 1.5f) + 1e-6f;
+    return glm::normalize(glm::vec3(
+        3*x*z / r3,
+        3*y*z / r3,
+        (2*z*z - x*x - y*y) / r3
+    ));
+
+10.9"vec>=14"-
+const float k = 2.0f * M_PI; 
+    // altura escalar de onda: h = sin(kx) * sin(ky) * sin(kz)
+    // então o gradiente ∇h aponta na direção de crescimento da onda
+    float hx = k * std::cos(k * x) * std::sin(k * y) * std::sin(k * z);
+    float hy = k * std::sin(k * x) * std::cos(k * y) * std::sin(k * z);
+    float hz = k * std::sin(k * x) * std::sin(k * y) * std::cos(k * z);
+
+    glm::vec3 g{ hx, hy, hz };
+    // opcional: se quiser vetores proporcionais à inclinação, retire o normalize
+    return glm::normalize(g);
