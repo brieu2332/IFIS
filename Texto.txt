@@ -31,13 +31,13 @@ return glm::normalize(glm::vec3( z, 0.0f, -x ));
 return glm::normalize(glm::vec3(0.0f, x, 0.0f));
 
 
-8.8- 
+8.7- 
 glm::vec3 grad{2.0f*x, 2.0f*y, -2.0f*z};
     return glm::normalize(grad);
 
 
 
-9.9"vec>=10"-
+9.9"vec>=9"-
 float r3 = pow(x*x + y*y + z*z, 1.5f) + 1e-6f;
     return glm::normalize(glm::vec3(
         3*x*z / r3,
@@ -56,3 +56,5 @@ const float k = 2.0f * M_PI;
     glm::vec3 g{ hx, hy, hz };
     // opcional: se quiser vetores proporcionais à inclinação, retire o normalize
     return glm::normalize(g);
+
+

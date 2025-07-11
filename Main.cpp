@@ -136,39 +136,34 @@ void cria_seta_3d(float x, float y, float z,
 // ---- Camera ----
 struct Camera {
     float r = 5, yaw = 0, pitch = 0;
-    float spd = glm::radians(60.0f), lim = glm::radians(89.0f);
+    float spd = glm::radians(60.0f), limitePitch = glm::radians(89.0f);
 };
 void processInput(GLFWwindow* w, Camera& c, float dt) {
-    if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS) c.yaw += c.spd * dt;
-    if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS) c.yaw -= c.spd * dt;
+	if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS) c.yaw += c.spd * dt;//spd velocidade de rotação
+    if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS) c.yaw -= c.spd * dt;
     if (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS) c.pitch += c.spd * dt;
     if (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS) c.pitch -= c.spd * dt;
     if (glfwGetKey(w, GLFW_KEY_KP_ADD) == GLFW_PRESS) c.r -= 2.0f * dt;
     if (glfwGetKey(w, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) c.r += 2.0f * dt;
-    c.pitch = glm::clamp(c.pitch, -c.lim, c.lim);
+    c.pitch = glm::clamp(c.pitch, -c.limitePitch, c.limitePitch);
     c.r = glm::clamp(c.r, 0.5f, 20.0f);
 }
 glm::mat4 computeView(const Camera& c) {
     float x = c.r * cos(c.pitch) * sin(c.yaw);
     float y = c.r * sin(c.pitch);
     float z = c.r * cos(c.pitch) * cos(c.yaw);
-    return glm::lookAt(glm::vec3{ x,y,z }, glm::vec3{ 0 }, glm::vec3{ 0,1,0 });
+    return glm::lookAt(glm::vec3{ x,y,z }, 
+            glm::vec3{ 0, 0, 0 }, 
+            glm::vec3{ 0,1,0 });
 }
 
 
+//using VectorField3D = std::function<glm::vec3(float, float, float)>;
 
-using VectorField3D = std::function<glm::vec3(float, float, float)>;
 
-/// Gera o campo volu­métrico e faz upload para GPU:
-/// @param f          função campo(x,y,z)
-/// @param Nx,Ny,Nz   resolução em cada eixo
-/// @param shaftLen   comprimento do corpo da seta
-/// @param headLen    comprimento do bico
-/// @param headW      largura do bico
-/// @param outVAO     VAO criado
-/// @return           número de vértices a desenhar (GL_LINES)
-GLsizei setupVolumetricField(
-    VectorField3D f,
+// Gera o campo 3d e faz upload para GPU:
+GLsizei setField(
+    std::function<glm::vec3(float, float, float)> f,
     int Nx, int Ny, int Nz,
     float shaftLen, float headLen, float headW,
     GLuint& outVAO
@@ -199,6 +194,30 @@ GLsizei setupVolumetricField(
         }
     }
 
+	// ----------tres linhas que apontam as direções X, Y, Z----------
+    //glm::vec3 inicioEixos = glm::vec3(-1.2f, -1.2f, -1.2f);
+    glm::vec3 inicioEixos = glm::vec3(0);
+
+    float tamanhoEixos = 2.0f;
+
+    glm::vec3 fimX = inicioEixos + glm::vec3(tamanhoEixos, 0.0f, 0.0f);
+    glm::vec3 fimY = inicioEixos + glm::vec3(0.0f, tamanhoEixos, 0.0f);
+    glm::vec3 fimZ = inicioEixos + glm::vec3(0.0f, 0.0f, tamanhoEixos);
+
+    // Adiciona os 18 floats (3 linhas) no final do vetor 'verts'
+    verts.insert(verts.end(), {
+        inicioEixos.x, inicioEixos.y, inicioEixos.z, 
+        fimX.x, fimX.y, fimX.z,
+
+        inicioEixos.x, inicioEixos.y, inicioEixos.z, 
+        fimY.x, fimY.y, fimY.z,
+
+        inicioEixos.x, inicioEixos.y, inicioEixos.z, 
+        fimZ.x, fimZ.y, fimZ.z
+        });
+    //-------fim------
+
+
     // 3) Upload GPU
     GLuint VBO;
     glGenVertexArrays(1, &outVAO);
@@ -218,8 +237,7 @@ GLsizei setupVolumetricField(
 }
 
 int main() {
-    // --- inicialização de janela, GLAD, shaders etc. ---
-    GLFWwindow* win = initWindow(800, 600, "Campo Volumétrico 3D");
+    GLFWwindow* win = initWindow(1000, 800, "Campo 3D");
     if (!win) return -1;
 
     GLuint prog = createProgram();
@@ -228,23 +246,22 @@ int main() {
     GLint projLoc = glGetUniformLocation(prog, "uProj");
 
     glm::mat4 proj = glm::perspective(glm::radians(45.0f),
-        800.0f / 600.0f,
+        1000.0f / 800.0f,
         0.1f, 100.0f);
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
     // --- configura e carrega o campo volu­métrico ---
     GLuint fieldVAO;
     int quant_vec = 8;
-    GLsizei vertexCount = setupVolumetricField(
-        // exemplo de campo 3D
+    GLsizei vertexCount = setField(
+        // exemplo de campo vetorial 3D
         [](float x, float y, float z) {
-            float wz = std::sin(2.0f * M_PI * x * y);
-            return glm::normalize(glm::vec3(y, -x, wz));
+            return glm::normalize(glm::vec3(0.0f, x, 0.0f));
         },
         quant_vec, quant_vec, quant_vec,       // Nx,Ny,Nz
-        0.2f,           // shaftLen
-        0.05f,          // headLen
-        0.02f,          // headWidth
+        0.2f,           
+        0.05f,          
+        0.02f,          
         fieldVAO
     );
 
@@ -253,7 +270,7 @@ int main() {
     float last = static_cast<float>(glfwGetTime());
     while (!glfwWindowShouldClose(win)) {
         float now = static_cast<float>(glfwGetTime()),
-            dt = now - last;
+        dt = now - last;
         last = now;
 
         processInput(win, cam, dt);
