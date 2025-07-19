@@ -8,9 +8,6 @@
 - Renderização 3D representando direção e magnitude do campo.
 - Controle de Câmera Orbital.
 
-## 🎥 Demonstração
-![GIF do projeto](campo_gif.gif)
-
 ## 📦 **Pré-requisitos**  
 - OpenGL 3.3+
 - GLFW
@@ -20,6 +17,14 @@
 - Teclas direcionais: Rotacionar câmera
 - +/-: Zoom in/out
 - ESC: Sair
+
+## 🎥 Demonstração Interativa
+- ### 📹 Vídeo Explicativo (YouTube)
+https://img.youtube.com/vi/SEU_ID_VIDEO/maxresdefault.jpg
+(Clique na imagem para assistir ao vídeo completo)
+
+- ### 🎮 Preview Rápido
+![GIF do projeto](campo_gif.gif)
 
 ## ⚙️ **Instalação**  
 Passos para configurar o projeto localmente:  
