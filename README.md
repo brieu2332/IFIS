@@ -1,22 +1,29 @@
-# Nome do Projeto  
+# 📊 Visualizador 3D de Campos Vetoriais
 
 🔹 **Descrição breve**  
-Uma explicação clara e direta do que seu projeto faz. Ex:  
-> "Um bot de Discord em Python para moderar servidores e responder comandos personalizados."  
+  
+> Renderiza campos vetoriais em 3D usando OpenGL/GLFW, com câmera orbital controlável por teclado.
 
 ## 🚀 **Funcionalidades**  
-- Lista das principais features (ex: "Comando `/play` para reproduzir música do YouTube").  
-- Destaque tecnologias usadas (ex: "Feito com Python, Discord.py e MongoDB").  
+- Renderização 3D representando direção e magnitude do campo.
+- Controle de Câmera Orbital.
+
+## 🎥 Demonstração
+![GIF do projeto](preview.gif)
 
 ## 📦 **Pré-requisitos**  
-O que é necessário para rodar o projeto? Ex:  
-- Python 3.10+  
-- Conta no Discord Developer  
-- Pacotes listados no `requirements.txt`  
+- OpenGL 3.3+
+- GLFW
+- GLM
+
+## 🕹️ **Controles**
+- Teclas direcionais: Rotacionar câmera
+- +/-: Zoom in/out
+- ESC: Sair
 
 ## ⚙️ **Instalação**  
 Passos para configurar o projeto localmente:  
 
-1. Clone o repositório:  
-   ```bash
-   git clone https://github.com/seu-usuario/nome-do-projeto.git
+1. Clone o repositório.
+2. Compile e execute no seu termial.
+    
