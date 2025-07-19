@@ -22,6 +22,8 @@
 - ### 📹 Vídeo Demonstrativo (YouTube)
 [https://img.youtube.com/vi/SEU_ID_VIDEO/maxresdefault.jpg](https://youtu.be/zrYaYc8Z2FM)
 
+[<img src="https://img.youtube.com/vi/zrYaYc8Z2FM/maxresdefault.jpg" width="50%">](https://youtu.be/SEU_ID_VIDEO){:target="_blank"}
+
 <a href="https://youtu.be/zrYaYc8Z2FM?si=GVsLaG75t3WMCYYi" target="_blank">
   <img src="https://img.youtube.com/vi/zrYaYc8Z2FM/maxresdefault.jpg" alt="Vídeo demonstrativo" width="600">
 </a>  
