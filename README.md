@@ -2,11 +2,12 @@
 
 🔹 **Descrição breve**  
   
-> Renderiza campos vetoriais em 3D usando OpenGL/GLFW, com câmera orbital controlável por teclado.
+> Renderiza visual de campos vetoriais em 3D usando OpenGL/GLFW, com câmera orbital controlável por teclado.
 
 ## 🚀 **Funcionalidades**  
 - Renderização 3D representando direção e magnitude do campo.
 - Controle de Câmera Orbital.
+- Visualição 3D do campo vetorial em X, Y, Z
 
 ## 📦 **Pré-requisitos**  
 - OpenGL 3.3+
