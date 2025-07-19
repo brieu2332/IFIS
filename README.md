@@ -14,13 +14,18 @@
 - GLM
 
 ## 🕹️ **Controles**
-- Teclas direcionais: Rotacionar câmera
+- ← → ↑ ↓: Teclas direcionais: Rotacionar câmera
 - +/-: Zoom in/out
 - ESC: Sair
 
 ## 🎥 Demonstração Interativa
-- ### 📹 Vídeo Explicativo (YouTube)
+- ### 📹 Vídeo Demonstrativo (YouTube)
 [https://img.youtube.com/vi/SEU_ID_VIDEO/maxresdefault.jpg](https://youtu.be/zrYaYc8Z2FM)
+
+<a href="https://youtu.be/zrYaYc8Z2FM?si=GVsLaG75t3WMCYYi" target="_blank">
+  <img src="https://img.youtube.com/vi/zrYaYc8Z2FM/maxresdefault.jpg" alt="Vídeo demonstrativo" width="600">
+</a>  
+
 (Clique na imagem para assistir ao vídeo completo)
 
 - ### 🎮 Preview Rápido
