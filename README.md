@@ -28,6 +28,10 @@
 ## ⚙️ **Instalação**  
 Passos para configurar o projeto localmente:  
 
-1. Clone o repositório.
-2. Compile e execute no seu termial.
+### 1. Clone o repositório:
+-  git clone https://github.com/brieu2332/IFIS.git
+  
+### 2. Compile e execute no seu termial.
+- g++ Main.cpp -lglfw -lGL -ldl -o campo3d
+- ./campo3d
     
