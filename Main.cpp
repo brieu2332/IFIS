@@ -195,10 +195,10 @@ GLsizei setField(
     }
 
 	// ----------tres linhas que apontam as direções X, Y, Z----------
-    //glm::vec3 inicioEixos = glm::vec3(-1.2f, -1.2f, -1.2f);
-    glm::vec3 inicioEixos = glm::vec3(0);
+    glm::vec3 inicioEixos = glm::vec3(-1.2f, -1.2f, -1.2f);
+    //glm::vec3 inicioEixos = glm::vec3(0);
 
-    float tamanhoEixos = 2.0f;
+    float tamanhoEixos = 1.5f;
 
     glm::vec3 fimX = inicioEixos + glm::vec3(tamanhoEixos, 0.0f, 0.0f);
     glm::vec3 fimY = inicioEixos + glm::vec3(0.0f, tamanhoEixos, 0.0f);
@@ -252,11 +252,17 @@ int main() {
 
     // --- configura e carrega o campo volu­métrico ---
     GLuint fieldVAO;
-    int quant_vec = 8;
+    int quant_vec = 10;
     GLsizei vertexCount = setField(
         // exemplo de campo vetorial 3D
         [](float x, float y, float z) {
-            return glm::normalize(glm::vec3(0.0f, x, 0.0f));
+            float r3 = pow(x * x + y * y + z * z, 1.5f) + 1e-6f;
+            return glm::normalize(glm::vec3(
+                3 * x * z / r3,
+                3 * y * z / r3,
+                (2 * z * z - x * x - y * y) / r3
+            ));
+        
         },
         quant_vec, quant_vec, quant_vec,       // Nx,Ny,Nz
         0.2f,           
