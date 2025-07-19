@@ -20,7 +20,7 @@
 
 ## 🎥 Demonstração Interativa
 - ### 📹 Vídeo Explicativo (YouTube)
-https://img.youtube.com/vi/SEU_ID_VIDEO/maxresdefault.jpg
+[https://img.youtube.com/vi/SEU_ID_VIDEO/maxresdefault.jpg](https://youtu.be/zrYaYc8Z2FM)
 (Clique na imagem para assistir ao vídeo completo)
 
 - ### 🎮 Preview Rápido
