@@ -9,7 +9,7 @@
 - Controle de Câmera Orbital.
 
 ## 🎥 Demonstração
-![GIF do projeto](preview.gif)
+![GIF do projeto](campo_gif.gif)
 
 ## 📦 **Pré-requisitos**  
 - OpenGL 3.3+
